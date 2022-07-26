@@ -1,0 +1,2 @@
+scheme: http
+endpoint: tracetest.tracetest.cluster.local:8080
