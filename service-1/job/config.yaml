@@ -6,7 +6,7 @@ actions:
     tasks:
       - name: "Run tracetest"
         files:
-          - /files
+          - '/files'
         image: "gardnera/python:tracetest"
         cmd:
           - "python3"
