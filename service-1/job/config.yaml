@@ -1,0 +1,14 @@
+apiVersion: v2
+actions:
+  - name: "Run tracetest"
+    events:
+      - name: "sh.keptn.event.test.triggered"
+    tasks:
+      - name: "Run tracetest"
+        files:
+          - /files
+        image: "gardnera/python:tracetest"
+        cmd:
+          - "python3"
+        args:
+          - '/keptn/files/app.py'
