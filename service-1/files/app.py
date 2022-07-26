@@ -50,5 +50,7 @@ print(f"Pass percentage: {pass_percentage}%")
 
 if pass_percentage == 0:
     print("No tests passed, failing the task...")
+    # If this script exits with a non-zero exit code, the task will fail as desired
+    exit(1)
 
 #print(check_results)
