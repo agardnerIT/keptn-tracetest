@@ -14,9 +14,6 @@ test_result = subprocess.run([
 
 test_result_json = json.loads(test_result.stdout)
 
-print(test_result_json)
-exit()
-
 check_results = []
 
 for selector_result in test_result_json['testRun']['result']['results']:
@@ -47,9 +44,9 @@ passed_checks = sum(1 for check in check_results if check['status'] == "Pass")
 failed_checks = sum(1 for check in check_results if check['status'] == "Fail")
 pass_percentage = round(passed_checks / len(check_results) * 100)
 
-#print(f"{passed_checks} checks passed")
-#print(f"{failed_checks} checks failed")
-#print(f"Pass percentage: {pass_percentage}%")
+print(f"{passed_checks} checks passed")
+print(f"{failed_checks} checks failed")
+print(f"Pass percentage: {pass_percentage}%")
 
 if pass_percentage == 0:
     print("No tests passed, failing the task...")
