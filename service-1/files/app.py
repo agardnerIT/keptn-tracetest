@@ -14,6 +14,9 @@ test_result = subprocess.run([
 
 test_result_json = json.loads(test_result.stdout)
 
+print(test_result_json)
+exit()
+
 check_results = []
 
 for selector_result in test_result_json['testRun']['result']['results']:
