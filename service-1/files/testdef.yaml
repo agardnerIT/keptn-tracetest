@@ -1,0 +1,28 @@
+id: b5706f39-d2f6-4a12-ba9e-fe6b3f4732c5
+name: POST import pokemon
+description: ""
+trigger:
+  type: http
+  httpRequest:
+    url: http://demo-pokemon-api.demo/pokemon/import
+    method: POST
+    headers:
+    - key: Content-Type
+      value: application/json
+    body: '{ "id": 52 }'
+  grpc:
+    protobufFile: ""
+    address: ""
+    method: ""
+testDefinition:
+- selector: span[name = "POST /pokemon/import"]
+  assertions:
+  - tracetest.span.duration <= 50ms
+  - http.status_code = 200
+  - tracetest.response.body contains 52
+- selector: span[name = "queue.synchronizePokemon send"]
+  assertions:
+  - messaging.payload contains 52
+- selector: span[name = "create pokeshop.pokemon"]
+  assertions:
+  - messaging.payload contains 52
