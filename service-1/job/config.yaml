@@ -5,7 +5,7 @@ actions:
       - name: "sh.keptn.event.test.triggered"
     tasks:
       - name: "Run tracetest"
-        imagePullPolicy: "Always"
+        #imagePullPolicy: "Always"
         files:
           - '/files'
         image: "gardnera/python:tracetest"
