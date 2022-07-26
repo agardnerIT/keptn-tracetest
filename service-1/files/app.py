@@ -49,9 +49,10 @@ print(f"{failed_checks} checks failed")
 print(f"Pass percentage: {pass_percentage}%")
 
 for check in check_results:
-    print()
+    print(f"Assertion: {check['name']} for selector: {check['selector']} status: {check['status']}")
 
 if pass_percentage == 0:
+    print("-------------")
     print("No tests passed, failing the task...")
     # If this script exits with a non-zero exit code, the task will fail as desired
     exit(1)
