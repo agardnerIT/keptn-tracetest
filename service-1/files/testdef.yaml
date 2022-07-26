@@ -17,12 +17,12 @@ trigger:
 testDefinition:
 - selector: span[name = "POST /pokemon/import"]
   assertions:
-  - tracetest.span.duration <= 50ms
-  - http.status_code = 200
-  - tracetest.response.body contains 52
+  - tracetest.span.duration <= 1ms
+  - http.status_code = 201
+  - tracetest.response.body contains 53
 - selector: span[name = "queue.synchronizePokemon send"]
   assertions:
-  - messaging.payload contains 52
+  - messaging.payload contains 53
 - selector: span[name = "create pokeshop.pokemon"]
   assertions:
-  - messaging.payload contains 52
+  - messaging.payload contains 53
