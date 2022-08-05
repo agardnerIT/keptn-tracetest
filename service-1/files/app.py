@@ -66,3 +66,11 @@ test_result_json = json.loads(test_result.stdout)
 #    exit(1)
 
 #print(check_results)
+
+###################
+# v2 logic
+# As above, check `.testRun.result.allPassed` if true, assume all checks passed
+# else assume some checks failed
+
+all_tests_passed = test_result_json['testRun']['result']['allPassed']
+print(f"All tests passed: {all_tests_passed}")
