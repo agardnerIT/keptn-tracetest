@@ -8,7 +8,10 @@ actions:
         #imagePullPolicy: "Always"
         files:
           - '/files'
-        image: "gardnera/python:tracetest"
+        # Image used with v2+ logic (pushing metrics to Prometheus)
+        image: "gardner/python:tracetest_with_prometheus"
+        # Image used with v1 logic
+        #image: "gardnera/python:tracetest"
         cmd:
           - "python3"
         args:
