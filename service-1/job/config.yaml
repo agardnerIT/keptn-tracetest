@@ -9,7 +9,7 @@ actions:
         files:
           - '/files'
         # Image used with v2+ logic (pushing metrics to Prometheus)
-        image: "gardner/python:tracetest_with_prometheus"
+        image: "gardnera/python:tracetest_with_prometheus"
         # Image used with v1 logic
         #image: "gardnera/python:tracetest"
         cmd:
