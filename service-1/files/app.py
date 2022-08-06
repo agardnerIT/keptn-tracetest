@@ -47,20 +47,22 @@ test_result = subprocess.run([
 
 test_result_json = json.loads(test_result.stdout)
 
-print(test_result_json)
+#print(test_result_json)
 
 #####################
 # v2 Logic:
 # if .testRun.result.allPassed is true then all checks have passed
 # otherwise some tests failed
 #####################
+assertion_count = 0
+check_count = 0
+
 if 'allPassed' in test_result_json['testRun']['result']:
     print("All tests passed...")
 else:
     print("Some tests failed...")
 
 assertion_count = len(test_result_json['testRun']['result']['results'])
-check_count = 0
 
 for assertion in test_result_json['testRun']['result']['results']:
     check_count_for_this_assertion = len(assertion['results'])
