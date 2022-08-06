@@ -1,6 +1,39 @@
 import json
 import subprocess
+from prometheus_client import CollectorRegistry, Counter, Gauge, push_to_gateway
+import os
 
+#####################
+# Set these values  #
+#####################
+
+# The name of this integration. It will form part of the metric name.
+INTEGRATION_NAME = "tracetest"
+
+# Your Prometheus Push Gateway endpoint
+# eg. "prometheus-pushgateway.monitoring.svc.cluster.local:9091"
+PROM_GATEWAY = "prometheus-pushgateway.monitoring.svc.cluster.local:9091"
+
+############################
+# End configurable values  #
+############################
+
+# These variables are passed to job-executor-service automatically on job startup
+# So you can assume they're available
+KEPTN_PROJECT = os.getenv("KEPTN_PROJECT", "NULL")
+KEPTN_SERVICE = os.getenv("KEPTN_SERVICE", "NULL")
+KEPTN_STAGE = os.getenv("KEPTN_STAGE", "NULL")
+
+PROM_LABELS = [
+    "ci_platform",
+    "keptn_project",
+    "keptn_service",
+    "keptn_stage"
+]
+
+########################
+# Do your work here... #
+########################
 test_result = subprocess.run([
     'tracetest',
     '--config',
@@ -35,6 +68,36 @@ for assertion in content['testRun']['result']['results']:
 
 print(f"{assertion_count} assertions defined...")
 print(f"{check_count} checks defined...")
+
+##########################
+# PUSH METRICS TO PROM   #
+##########################
+reg = CollectorRegistry()
+
+# Create assertionCount Prom metric
+metric_name = "assertionCount"
+g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
+# Set the labels and values
+g.labels(
+  ci_platform="keptn",
+  keptn_project=KEPTN_PROJECT,
+  keptn_service=KEPTN_SERVICE,
+  keptn_stage=KEPTN_STAGE
+).set(assertion_count)
+
+# Create checkCount Prom metric
+metric_name = "checkCount"
+g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
+# Set the labels and values
+g.labels(
+  ci_platform="keptn",
+  keptn_project=KEPTN_PROJECT,
+  keptn_service=KEPTN_SERVICE,
+  keptn_stage=KEPTN_STAGE
+).set(check_count)
+
+# Send the metrics to Prometheus Push Gateway
+push_to_gateway(gateway=PROM_GATEWAY,job=f"job-executor-service", registry=reg)
     
 exit()
 
@@ -90,11 +153,3 @@ print(f"Pass percentage: {pass_percentage}%")
 #    exit(1)
 
 #print(check_results)
-
-###################
-# v2 logic
-# As above, check `.testRun.result.allPassed` if true, assume all checks passed
-# else assume some checks failed
-
-#all_tests_passed = test_result_json['testRun']['result']['allPassed']
-#print(f"All tests passed: {all_tests_passed}")
