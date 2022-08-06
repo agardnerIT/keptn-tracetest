@@ -49,6 +49,8 @@ test_result_json = json.loads(test_result.stdout)
 
 print(test_result_json)
 
+exit()
+
 #####################
 # v2 Logic:
 # if .testRun.result.allPassed is true then all checks have passed
