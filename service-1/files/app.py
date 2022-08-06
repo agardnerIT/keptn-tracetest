@@ -17,6 +17,28 @@ test_result_json = json.loads(test_result.stdout)
 print(test_result_json)
 
 #####################
+# v2 Logic:
+# if .testRun.result.allPassed is true then all checks have passed
+# otherwise some tests failed
+#####################
+if 'allPassed' in content['testRun']['result']:
+    print("All tests passed...")
+else:
+    print("Some tests failed...")
+
+assertion_count = len(content['testRun']['result']['results'])
+check_count = 0
+
+for assertion in content['testRun']['result']['results']:
+    check_count_for_this_assertion = len(assertion['results'])
+    check_count += check_count_for_this_assertion
+
+print(f"{assertion_count} assertions defined...")
+print(f"{check_count} checks defined...")
+    
+exit()
+
+#####################
 # v1 Logic: Parse the results and fail the Keptn task if ALL tracetest checks FAIL
 # Cause the task to fail simply by outputting a non-zero exit code
 # According to a discussion on discord with schoren, apparently this is even easier:
