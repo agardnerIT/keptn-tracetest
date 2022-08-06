@@ -5,7 +5,8 @@ actions:
       - name: "sh.keptn.event.test.triggered"
     tasks:
       - name: "Run tracetest"
-        #imagePullPolicy: "Always"
+        # When testing to guarantee new images are pulled. Do not use in production.
+        imagePullPolicy: "Always"
         files:
           - '/files'
         # Image used with v2+ logic (pushing metrics to Prometheus)
