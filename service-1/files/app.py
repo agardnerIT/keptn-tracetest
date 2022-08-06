@@ -54,15 +54,15 @@ print(test_result_json)
 # if .testRun.result.allPassed is true then all checks have passed
 # otherwise some tests failed
 #####################
-if 'allPassed' in content['testRun']['result']:
+if 'allPassed' in test_result_json['testRun']['result']:
     print("All tests passed...")
 else:
     print("Some tests failed...")
 
-assertion_count = len(content['testRun']['result']['results'])
+assertion_count = len(test_result_json['testRun']['result']['results'])
 check_count = 0
 
-for assertion in content['testRun']['result']['results']:
+for assertion in test_result_json['testRun']['result']['results']:
     check_count_for_this_assertion = len(assertion['results'])
     check_count += check_count_for_this_assertion
 
