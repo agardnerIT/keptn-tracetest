@@ -71,6 +71,41 @@ for assertion in test_result_json['testRun']['result']['results']:
 print(f"{assertion_count} assertions defined...")
 print(f"{check_count} checks defined...")
 
+check_results = []
+
+for selector_result in test_result_json['testRun']['result']['results']:
+
+    selector_query = selector_result['selector']['query']
+    #print(f"Got selector_query: {selector_query}")
+
+    for assertion_result in selector_result['results']:
+
+        check_name = assertion_result['assertion']['attribute']
+        if "allPassed" in assertion_result:
+            #print(f"Assertion: {assertion_name} passed for selector: {selector_query}")
+            check_results.append({
+                "name": check_name,
+                "selector": selector_query,
+                "status": "Pass"
+            })
+        else:
+            #print(f"Assertion: {assertion_name} failed for selector: {selector_query}")
+            check_results.append({
+                "name": check_name,
+                "selector": selector_query,
+                "status": "Fail"
+            })
+
+# Output Results for Checks.
+passed_checks = sum(1 for check in check_results if check['status'] == "Pass")
+failed_checks = sum(1 for check in check_results if check['status'] == "Fail")
+pass_percentage = round(passed_checks / len(check_results) * 100)
+
+print(f"{passed_checks} checks passed")
+print(f"{failed_checks} checks failed")
+print(f"Pass percentage: {pass_percentage}%")
+
+
 ##########################
 # PUSH METRICS TO PROM   #
 ##########################
@@ -98,56 +133,45 @@ g.labels(
   keptn_stage=KEPTN_STAGE
 ).set(check_count)
 
+# Create passedCheckCount Prom metric
+metric_name = "passedCheckCount"
+g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
+# Set the labels and values
+g.labels(
+  ci_platform="keptn",
+  keptn_project=KEPTN_PROJECT,
+  keptn_service=KEPTN_SERVICE,
+  keptn_stage=KEPTN_STAGE
+).set(passed_checks)
+
+# Create failedCheckCount Prom metric
+metric_name = "failedCheckCount"
+g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
+# Set the labels and values
+g.labels(
+  ci_platform="keptn",
+  keptn_project=KEPTN_PROJECT,
+  keptn_service=KEPTN_SERVICE,
+  keptn_stage=KEPTN_STAGE
+).set(failed_checks)
+
+# This calculation could be done in Prom
+# But for convenience, push as a metric
+# Create passedCheckPercentage Prom metric
+metric_name = "passedCheckPercentage"
+g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
+# Set the labels and values
+g.labels(
+  ci_platform="keptn",
+  keptn_project=KEPTN_PROJECT,
+  keptn_service=KEPTN_SERVICE,
+  keptn_stage=KEPTN_STAGE
+).set(pass_percentage)
+
 # Send the metrics to Prometheus Push Gateway
 push_to_gateway(gateway=PROM_GATEWAY,job=f"job-executor-service", registry=reg)
-    
-exit()
 
-#####################
-# v1 Logic: Parse the results and fail the Keptn task if ALL tracetest checks FAIL
-# Cause the task to fail simply by outputting a non-zero exit code
-# According to a discussion on discord with schoren, apparently this is even easier:
-# if .testRun.result.allPassed is true then all checks have passed
-# if .testRun.result.allPassed is missing or false, we can assume some checks have failed
-#####################
-
-check_results = []
-
-for selector_result in test_result_json['testRun']['result']['results']:
-
-    selector_query = selector_result['selector']['query']
-    #print(f"Got selector_query: {selector_query}")
-
-    for assertion_result in selector_result['results']:
-
-        assertion_name = assertion_result['assertion']['attribute']
-        if "allPassed" in assertion_result:
-            #print(f"Assertion: {assertion_name} passed for selector: {selector_query}")
-            check_results.append({
-                "name": assertion_name,
-                "selector": selector_query,
-                "status": "Pass"
-            })
-        else:
-            #print(f"Assertion: {assertion_name} failed for selector: {selector_query}")
-            check_results.append({
-                "name": assertion_name,
-                "selector": selector_query,
-                "status": "Fail"
-            })
-
-# Output Results for Checks.
-passed_checks = sum(1 for check in check_results if check['status'] == "Pass")
-failed_checks = sum(1 for check in check_results if check['status'] == "Fail")
-pass_percentage = round(passed_checks / len(check_results) * 100)
-
-print(f"{passed_checks} checks passed")
-print(f"{failed_checks} checks failed")
-print(f"Pass percentage: {pass_percentage}%")
-
-#for check in check_results:
-#    print(f"Assertion: {check['name']} for selector: {check['selector']} status: {check['status']}")
-
+# We could decide that if all checks fail, the Keptn task fails
 #if pass_percentage == 0:
 #    print("-------------")
 #    print("No tests passed, failing the task...")
