@@ -19,7 +19,7 @@ testDefinition:
   assertions:
   - tracetest.span.duration <= 1ms
   - http.status_code = 201
-  - tracetest.response.body contains 52
+  - tracetest.response.body contains 53
 - selector: span[name = "queue.synchronizePokemon send"]
   assertions:
   - messaging.payload contains 52
