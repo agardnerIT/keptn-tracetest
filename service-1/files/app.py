@@ -32,9 +32,7 @@ PROM_LABELS = [
     "keptn_stage"
 ]
 
-########################
-# Do your work here... #
-########################
+# Run tracetest and wait for results...
 test_result = subprocess.run([
     'tracetest',
     'test',
@@ -54,27 +52,27 @@ print(test_result_json)
 
 #####################
 # v2 Logic:
-# if .testRun.result.allPassed is true then all checks have passed
+# if .testRun.result.allPassed is true then all assertions have passed
 # otherwise some tests failed
 #####################
+specification_count = 0
 assertion_count = 0
-check_count = 0
 
 if 'allPassed' in test_result_json['testRun']['result']:
-    print("All tests passed...")
+    print("All test specifications passed...")
 else:
-    print("Some tests failed...")
+    print("Some test specifications failed...")
 
 specification_count = len(test_result_json['testRun']['result']['results'])
 
 for specification in test_result_json['testRun']['result']['results']:
-    check_count_for_this_specification = len(specification['results'])
-    check_count += check_count_for_this_specification
+    assertion_count_for_this_specification = len(specification['results'])
+    assertion_count += assertion_count_for_this_specification
 
-print(f"{specification_count} assertions defined...")
-print(f"{check_count} checks defined...")
+print(f"{specification_count} specifications defined...")
+print(f"{assertion_count} assertions defined...")
 
-check_results = []
+assertion_results = []
 
 for selector_result in test_result_json['testRun']['result']['results']:
 
@@ -83,29 +81,27 @@ for selector_result in test_result_json['testRun']['result']['results']:
 
     for specification_result in selector_result['results']:
 
-        check_name = specification_result['assertion']['attribute']
-        if "allPassed" in assertion_result:
-            #print(f"Specification: {assertion_name} passed for selector: {selector_query}")
-            check_results.append({
-                "name": check_name,
+        assertion_name = specification_result['assertion']['attribute']
+        if "allPassed" in specification_result:
+            assertion_results.append({
+                "name": assertion_name,
                 "selector": selector_query,
                 "status": "Pass"
             })
         else:
-            #print(f"Specification: {assertion_name} failed for selector: {selector_query}")
-            check_results.append({
-                "name": check_name,
+            assertion_results.append({
+                "name": assertion_name,
                 "selector": selector_query,
                 "status": "Fail"
             })
 
-# Output Results for Checks.
-passed_checks = sum(1 for check in check_results if check['status'] == "Pass")
-failed_checks = sum(1 for check in check_results if check['status'] == "Fail")
-pass_percentage = round(passed_checks / len(check_results) * 100)
+# Output Results for assertions.
+passed_assertions = sum(1 for assertion in assertion_results if assertion['status'] == "Pass")
+failed_assertions = sum(1 for assertion in assertion_results if assertion['status'] == "Fail")
+pass_percentage = round(passed_assertions / len(assertion_results) * 100)
 
-print(f"{passed_checks} checks passed")
-print(f"{failed_checks} checks failed")
+print(f"{passed_assertions} assertions passed")
+print(f"{failed_assertions} assertions failed")
 print(f"Pass percentage: {pass_percentage}%")
 
 
@@ -113,6 +109,17 @@ print(f"Pass percentage: {pass_percentage}%")
 # PUSH METRICS TO PROM   #
 ##########################
 reg = CollectorRegistry()
+
+# Create assertionCount Prom metric
+metric_name = "specificationCount"
+g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
+# Set the labels and values
+g.labels(
+  ci_platform="keptn",
+  keptn_project=KEPTN_PROJECT,
+  keptn_service=KEPTN_SERVICE,
+  keptn_stage=KEPTN_STAGE
+).set(specification_count)
 
 # Create assertionCount Prom metric
 metric_name = "assertionCount"
@@ -125,8 +132,8 @@ g.labels(
   keptn_stage=KEPTN_STAGE
 ).set(assertion_count)
 
-# Create checkCount Prom metric
-metric_name = "checkCount"
+# Create passedAssertionCount Prom metric
+metric_name = "passedAssertionCount"
 g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
 # Set the labels and values
 g.labels(
@@ -134,10 +141,10 @@ g.labels(
   keptn_project=KEPTN_PROJECT,
   keptn_service=KEPTN_SERVICE,
   keptn_stage=KEPTN_STAGE
-).set(check_count)
+).set(passed_assertions)
 
-# Create passedCheckCount Prom metric
-metric_name = "passedCheckCount"
+# Create failedAssertionCount Prom metric
+metric_name = "failedAssertionCount"
 g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
 # Set the labels and values
 g.labels(
@@ -145,23 +152,12 @@ g.labels(
   keptn_project=KEPTN_PROJECT,
   keptn_service=KEPTN_SERVICE,
   keptn_stage=KEPTN_STAGE
-).set(passed_checks)
-
-# Create failedCheckCount Prom metric
-metric_name = "failedCheckCount"
-g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
-# Set the labels and values
-g.labels(
-  ci_platform="keptn",
-  keptn_project=KEPTN_PROJECT,
-  keptn_service=KEPTN_SERVICE,
-  keptn_stage=KEPTN_STAGE
-).set(failed_checks)
+).set(failed_assertions)
 
 # This calculation could be done in Prom
 # But for convenience, push as a metric
-# Create passedCheckPercentage Prom metric
-metric_name = "passedCheckPercentage"
+# Create passedAssertionPercentage Prom metric
+metric_name = "passedAssertionPercentage"
 g = Gauge(name=f"keptn_{INTEGRATION_NAME}_{metric_name}", documentation='', registry=reg, labelnames=PROM_LABELS)
 # Set the labels and values
 g.labels(
@@ -174,11 +170,11 @@ g.labels(
 # Send the metrics to Prometheus Push Gateway
 push_to_gateway(gateway=PROM_GATEWAY,job=f"job-executor-service", registry=reg)
 
-# We could decide that if all checks fail, the Keptn task fails
+# We could decide that if all assertions fail, the Keptn task fails
 #if pass_percentage == 0:
 #    print("-------------")
 #    print("No tests passed, failing the task...")
     # If this script exits with a non-zero exit code, the task will fail as desired
 #    exit(1)
 
-#print(check_results)
+#print(assertion_results)
