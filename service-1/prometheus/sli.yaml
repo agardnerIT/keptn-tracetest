@@ -1,1 +1,7 @@
-TODO
+---
+spec_version: '1.0'
+indicators:
+  tracetest_failedCheckCount: keptn_tracetest_failedCheckCount{ci_platform="keptn", job="job-executor-service", keptn_project="$PROJECT", keptn_service="$SERVICE", keptn_stage="$STAGE"}
+  tracetest_passedCheckCount: keptn_tracetest_passedCheckCount{ci_platform="keptn", job="job-executor-service", keptn_project="$PROJECT", keptn_service="$SERVICE", keptn_stage="$STAGE"}
+  tracetest_passedCheckPercentage: keptn_tracetest_passedCheckPercentage{ci_platform="keptn", job="job-executor-service", keptn_project="$PROJECT", keptn_service="$SERVICE", keptn_stage="$STAGE"}
+  tracetest_checkCount: keptn_tracetest_checkCount{ci_platform="keptn", job="job-executor-service", keptn_project="$PROJECT", keptn_service="$SERVICE", keptn_stage="$STAGE"}
