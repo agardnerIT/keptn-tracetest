@@ -1,1 +1,10 @@
-TODO
+spec_version: '1.0'
+comparison:
+  compare_with: "single_result"
+  include_result_with_score: "pass"
+  aggregate_function: avg
+objectives:
+  - sli: tracetest_failedCheckCount
+  - sli: tracetest_passedCheckCount
+  - sli: tracetest_passedCheckPercentage
+  - sli: tracetest_checkCount
