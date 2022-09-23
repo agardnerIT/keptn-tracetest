@@ -47,7 +47,7 @@ test_result = subprocess.run([
 
 test_result_json = json.loads(test_result.stdout)
 
-#print(test_result_json)
+print(test_result_json)
 
 #####################
 # v2 Logic:
