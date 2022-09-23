@@ -9,7 +9,7 @@ objectives:
   - sli: tracetest_passedCheckPercentage
     pass:
       - criteria:
-        - "100"
+        - "25"
   - sli: tracetest_checkCount
     pass:
       - criteria:
