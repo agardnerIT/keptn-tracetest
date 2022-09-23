@@ -9,10 +9,7 @@ actions:
         imagePullPolicy: "Always"
         files:
           - '/files'
-        # Image used with v2+ logic (pushing metrics to Prometheus)
-        image: "gardnera/tt:latest"
-        # Image used with v1 logic
-        #image: "gardnera/python:tracetest"
+        image: "gardnera/python:tracetest_with_prometheus"
         cmd:
           - "python3"
         args:
