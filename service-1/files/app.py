@@ -65,13 +65,13 @@ if 'allPassed' in test_result_json['testRun']['result']:
 else:
     print("Some tests failed...")
 
-assertion_count = len(test_result_json['testRun']['result']['results'])
+specification_count = len(test_result_json['testRun']['result']['results'])
 
-for assertion in test_result_json['testRun']['result']['results']:
-    check_count_for_this_assertion = len(assertion['results'])
-    check_count += check_count_for_this_assertion
+for specification in test_result_json['testRun']['result']['results']:
+    check_count_for_this_specification = len(specification['results'])
+    check_count += check_count_for_this_specification
 
-print(f"{assertion_count} assertions defined...")
+print(f"{specification_count} assertions defined...")
 print(f"{check_count} checks defined...")
 
 check_results = []
@@ -81,18 +81,18 @@ for selector_result in test_result_json['testRun']['result']['results']:
     selector_query = selector_result['selector']['query']
     #print(f"Got selector_query: {selector_query}")
 
-    for assertion_result in selector_result['results']:
+    for specification_result in selector_result['results']:
 
-        check_name = assertion_result['assertion']['attribute']
+        check_name = specification_result['assertion']['attribute']
         if "allPassed" in assertion_result:
-            #print(f"Assertion: {assertion_name} passed for selector: {selector_query}")
+            #print(f"Specification: {assertion_name} passed for selector: {selector_query}")
             check_results.append({
                 "name": check_name,
                 "selector": selector_query,
                 "status": "Pass"
             })
         else:
-            #print(f"Assertion: {assertion_name} failed for selector: {selector_query}")
+            #print(f"Specification: {assertion_name} failed for selector: {selector_query}")
             check_results.append({
                 "name": check_name,
                 "selector": selector_query,
