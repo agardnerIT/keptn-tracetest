@@ -2,6 +2,7 @@ import json
 import subprocess
 from prometheus_client import CollectorRegistry, Counter, Gauge, push_to_gateway
 import os
+import sys
 
 #####################
 # Set these values  #
@@ -48,7 +49,7 @@ test_result = subprocess.run([
 test_result_json = json.loads(test_result.stdout)
 
 print(test_result_json)
-exit()
+sys.exit()
 
 #####################
 # v2 Logic:
