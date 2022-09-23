@@ -9,7 +9,7 @@ objectives:
   - sli: tracetest_passedCheckPercentage
     pass:
       - criteria:
-        - "=100"
+        - "100"
   - sli: tracetest_checkCount
 total_score:
   pass: "90%"
