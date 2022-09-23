@@ -7,13 +7,13 @@ objectives:
   - sli: tracetest_failedCheckCount
   - sli: tracetest_passedCheckCount
   - sli: tracetest_passedCheckPercentage
-    pass:
-      - criteria:
-        - ">=25"
+#    pass:
+#      - criteria:
+#        - ">=25"
   - sli: tracetest_checkCount
-    pass:
-      - criteria:
-        - ">=0%"
+#    pass:
+#      - criteria:
+#        - ">=0%"
 total_score:
   pass: "90%"
   warning: "75%"
