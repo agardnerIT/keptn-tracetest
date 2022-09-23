@@ -36,10 +36,10 @@ PROM_LABELS = [
 ########################
 test_result = subprocess.run([
     'tracetest',
-    '--config',
-    '/keptn/files/config.yml',
     'test',
     'run',
+    '--config',
+    '/keptn/files/config.yml',
     '--definition',
     '/keptn/files/testdef.yaml',
     '--wait-for-result'
