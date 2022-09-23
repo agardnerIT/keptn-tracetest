@@ -11,7 +11,7 @@ trigger:
 specs:
 - selector: span[name = "POST /pokemon/import"]
   assertions:
-  - tracetest.span.duration <= "30"
+  - tracetest.span.duration <= "30ms"
   - http.status_code = 200
   - http.response.body contains 52
 - selector: span[name="queue.synchronizePokemon send"]
