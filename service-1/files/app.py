@@ -51,7 +51,6 @@ test_result = subprocess.run([
 test_result_json = json.loads(test_result.stdout)
 
 print(test_result_json)
-sys.exit()
 
 #####################
 # v2 Logic:
