@@ -48,12 +48,11 @@ test_result = subprocess.run([
 
 test_result_json = json.loads(test_result.stdout)
 
-print(test_result_json)
+#print(test_result_json)
 
 #####################
-# v2 Logic:
 # if .testRun.result.allPassed is true then all assertions have passed
-# otherwise some tests failed
+# otherwise some assertions failed
 #####################
 specification_count = 0
 assertion_count = 0
