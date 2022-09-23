@@ -41,7 +41,7 @@ test_result = subprocess.run([
     '--config',
     '/keptn/files/config.yml',
     '--definition',
-    '/keptn/files/definition.yaml',
+    '/keptn/files/testdef.yaml',
     '--wait-for-result'
     ], capture_output=True)
 
