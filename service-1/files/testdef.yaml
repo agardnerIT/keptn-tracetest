@@ -18,7 +18,7 @@ testDefinition:
 - selector: span[name = "POST /pokemon/import"]
   assertions:
   - tracetest.span.duration <= 1ms
-  #- http.status_code = 201
+  - http.status_code = 201
   - tracetest.response.body contains 53
 - selector: span[name = "queue.synchronizePokemon send"]
   assertions:
