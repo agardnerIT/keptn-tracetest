@@ -11,6 +11,9 @@ objectives:
       - criteria:
         - "100"
   - sli: tracetest_checkCount
+    pass:
+      - criteria:
+        - ">=0%"
 total_score:
   pass: "90%"
   warning: "75%"
