@@ -43,7 +43,9 @@ test_result = subprocess.run([
     '/keptn/files/config.yml',
     '--definition',
     '/keptn/files/testdef.yaml',
-    '--wait-for-result'
+    '--wait-for-result',
+    '-o',
+    'json'
     ], capture_output=True)
 
 test_result_json = json.loads(test_result.stdout)
