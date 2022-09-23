@@ -9,3 +9,5 @@ spec:
         - name: "sequence1"
           tasks:
             - name: "test"
+            - name: "evaluation"
+            - name: "deployment"
