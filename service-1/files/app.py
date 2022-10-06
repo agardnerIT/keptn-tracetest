@@ -126,21 +126,21 @@ def process_tracetest_json():
     for selector_result in test_result_json['testRun']['result']['results']:
         selector_query = selector_result['selector']['query']
         #print(f"Got selector_query: {selector_query}")
-
-    for specification_result in selector_result['results']:
-        assertion_name = specification_result['assertion']['attribute']
-        if "allPassed" in specification_result:
-            assertion_results.append({
-                "name": assertion_name,
-                "selector": selector_query,
-                "status": "Pass"
-            })
-        else:
-            assertion_results.append({
-                "name": assertion_name,
-                "selector": selector_query,
-                "status": "Fail"
-            })
+    
+        for specification_result in selector_result['results']:
+            assertion_name = specification_result['assertion']['attribute']
+            if "allPassed" in specification_result:
+                assertion_results.append({
+                    "name": assertion_name,
+                    "selector": selector_query,
+                    "status": "Pass"
+                })
+            else:
+                assertion_results.append({
+                    "name": assertion_name,
+                    "selector": selector_query,
+                    "status": "Fail"
+                })
 
     # Output Results for assertions.
     passed_assertions = sum(1 for assertion in assertion_results if assertion['status'] == "Pass")
