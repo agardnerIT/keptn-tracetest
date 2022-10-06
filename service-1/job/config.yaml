@@ -5,8 +5,6 @@ actions:
       - name: "sh.keptn.event.test.triggered"
     tasks:
       - name: "Run tracetest"
-        # When testing to guarantee new images are pulled. Do not use in production.
-        #imagePullPolicy: "Always"
         files:
           - '/files'
         image: "gardnera/python:tracetest_with_prometheus"
