@@ -177,11 +177,11 @@ print(test_result_json)
 if test_result_json['testRun']['state'] == "FAILED":
     print(f"tracetest failed because: {test_result_json['testRun']['lastErrorState']}")
     print("Pushing metrics all set to 0 to prom and exiting cleanly. Please investigate")
-    push_to_prom()
+    push_to_prometheus()
     exit()
 
 
 process_tracetest_json()
 
 # Push metrics to Prometheus
-push_to_prom()
+push_to_prometheus()
