@@ -10,4 +10,6 @@ spec:
           tasks:
             - name: "test"
             - name: "evaluation"
+              properties:
+                timeframe: 5m
             #- name: "deployment"
