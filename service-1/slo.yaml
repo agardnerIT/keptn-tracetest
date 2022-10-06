@@ -4,13 +4,13 @@ comparison:
   include_result_with_score: "pass"
   aggregate_function: avg
 objectives:
-  - sli: tracetest_failedCheckCount
-  - sli: tracetest_passedCheckCount
-  - sli: tracetest_passedCheckPercentage
+  - sli: tracetest_failedAssertionCount
+  - sli: tracetest_passedAssertionCount
+  - sli: tracetest_passedAssertionPercentage
     pass:
       - criteria:
         - ">=25"
-  - sli: tracetest_checkCount
+  - sli: tracetest_assertionCount
     pass:
       - criteria:
         - ">=0%"
