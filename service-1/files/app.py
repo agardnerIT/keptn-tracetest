@@ -32,13 +32,8 @@ PROM_LABELS = [
     "keptn_stage"
 ]
 
-specification_count = 0
-assertion_count = 0
-passed_assertions = 0
-failed_assertions = 0
-pass_percentage = 0
-
-def push_to_prometheus():
+def push_to_prometheus(result):
+    
     ##########################
     # PUSH METRICS TO PROM   #
     ##########################
@@ -53,7 +48,7 @@ def push_to_prometheus():
       keptn_project=KEPTN_PROJECT,
       keptn_service=KEPTN_SERVICE,
       keptn_stage=KEPTN_STAGE
-    ).set(specification_count)
+    ).set(result['specification_count'])
 
     # Create assertionCount Prom metric
     metric_name = "assertionCount"
@@ -64,7 +59,7 @@ def push_to_prometheus():
       keptn_project=KEPTN_PROJECT,
       keptn_service=KEPTN_SERVICE,
       keptn_stage=KEPTN_STAGE
-    ).set(assertion_count)
+    ).set(result['assertion_count'])
 
     # Create passedAssertionCount Prom metric
     metric_name = "passedAssertionCount"
@@ -75,7 +70,7 @@ def push_to_prometheus():
       keptn_project=KEPTN_PROJECT,
       keptn_service=KEPTN_SERVICE,
       keptn_stage=KEPTN_STAGE
-    ).set(passed_assertions)
+    ).set(result['passed_assertions'])
 
     # Create failedAssertionCount Prom metric
     metric_name = "failedAssertionCount"
@@ -86,7 +81,7 @@ def push_to_prometheus():
       keptn_project=KEPTN_PROJECT,
       keptn_service=KEPTN_SERVICE,
       keptn_stage=KEPTN_STAGE
-    ).set(failed_assertions)
+    ).set(result['failed_assertions'])
 
     # This calculation could be done in Prom
     # But for convenience, push as a metric
@@ -99,12 +94,19 @@ def push_to_prometheus():
       keptn_project=KEPTN_PROJECT,
       keptn_service=KEPTN_SERVICE,
       keptn_stage=KEPTN_STAGE
-    ).set(pass_percentage)
+    ).set(result['pass_percentage'])
 
     # Send the metrics to Prometheus Push Gateway
     push_to_gateway(gateway=PROM_GATEWAY,job=f"job-executor-service", registry=reg)
 
 def process_tracetest_json():
+    
+    specification_count = 0
+    assertion_count = 0
+    passed_assertions = 0
+    failed_assertions = 0
+    pass_percentage = 0
+    
     if 'allPassed' in test_result_json['testRun']['result']:
         print("All test specifications passed...")
     else:
@@ -148,6 +150,14 @@ def process_tracetest_json():
     print(f"{passed_assertions} assertions passed")
     print(f"{failed_assertions} assertions failed")
     print(f"Pass percentage: {pass_percentage}%")
+    
+    return {
+        "specification_count": specification_count,
+        "assertion_count": assertion_count,
+        "passed_assertions": passed_assertions,
+        "failed_assertions": failed_assertions,
+        "pass_percentage": pass_percentage
+    }
 
 
 # Run tracetest and wait for results...
@@ -177,11 +187,16 @@ print(test_result_json)
 if test_result_json['testRun']['state'] == "FAILED":
     print(f"tracetest failed because: {test_result_json['testRun']['lastErrorState']}")
     print("Pushing metrics all set to 0 to prom and exiting cleanly. Please investigate")
-    push_to_prometheus()
+    push_to_prometheus({
+        "specification_count" = 0
+        "assertion_count" = 0
+        "passed_assertions" = 0
+        "failed_assertions" = 0
+        "pass_percentage" = 0
+    })
     exit()
 
-
-process_tracetest_json()
+results = process_tracetest_json()
 
 # Push metrics to Prometheus
-push_to_prometheus()
+push_to_prometheus(results)
