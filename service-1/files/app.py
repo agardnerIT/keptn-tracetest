@@ -188,11 +188,11 @@ if test_result_json['testRun']['state'] == "FAILED":
     print(f"tracetest failed because: {test_result_json['testRun']['lastErrorState']}")
     print("Pushing metrics all set to 0 to prom and exiting cleanly. Please investigate")
     push_to_prometheus({
-        "specification_count" = 0,
-        "assertion_count" = 0,
-        "passed_assertions" = 0,
-        "failed_assertions" = 0,
-        "pass_percentage" = 0
+        "specification_count": 0,
+        "assertion_count": 0,
+        "passed_assertions": 0,
+        "failed_assertions": 0,
+        "pass_percentage": 0
     })
     exit()
 
